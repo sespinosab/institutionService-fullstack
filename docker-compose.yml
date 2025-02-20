@@ -1,0 +1,45 @@
+
+networks:
+  secretary:
+    driver: bridge
+
+services:
+  secretary-db:
+    image: postgres:15-alpine
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_ROOT_PASSWORD: 1848
+      POSTGRES_DATABASE: institutiondb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1848
+    restart: always
+    networks:
+      - secretary
+
+  materias-institucion-back:
+    build: ./materias-institucion-back
+    ports:
+      - 3333:3333
+    depends_on:
+      - secretary-db
+    restart: always
+    env_file:
+      - ./materias-institucion-back/.env
+    networks:
+      - secretary
+
+  materias-institucion-front:
+    build: ./materias-institucion-front
+    ports:
+      - 5172:5172
+    depends_on:
+      - materias-institucion-back
+    env_file:
+      - ./materias-institucion-front/.env
+    networks:
+      - secretary
+
+  
+
+  
